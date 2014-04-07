@@ -33,6 +33,12 @@
 #include "misc.h"
 #include "delay.h"
 
+// include by A.S.
+#include "led.h"
+#include "lcd.h"
+#include "uninit.h"
+#include "init.h"
+
 // the HSI (High Speed Internal) oscillator is used 
 #define USE_HSI
 
@@ -44,8 +50,6 @@ static ErrorStatus User_GetPayloadLength(uint8_t *PayloadLength);
 static ErrorStatus User_CheckNDEFMessage(void);
 static ErrorStatus User_GetNDEFMessage(uint8_t  PayloadLength,uint8_t *NDEFmessage);
 static void ToUpperCase (uint8_t  NbCar ,uint8_t *StringToConvert);
-static void DeInitClock ( void );
-static void DeInitGPIO ( void );
 static void User_DesactivateEnergyHarvesting ( void );
 static void User_EnterIntoLowPowerMode(void);
 static void InitializeBuffer (uint8_t *Buffer ,uint8_t NbCar);
@@ -70,8 +74,7 @@ static void OverwriteAll_CODE_EEPROM(void);
 //***** Eigene Variablen ************
 static CodeLength;
 
-/* LCD bar graph: used for display active function */
-extern uint8_t t_bar[2];
+
 
 uint8_t NDEFmessage[0x40];
 const uint8_t ErrorMessage[]={'N','O','T',' ','A',' ','N','D','E','F',' ','T','E','X','T',' ','M','E','S','S','A','G','E',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
@@ -100,8 +103,8 @@ EEPROM uint8_t  EE_Buffer_2 [1];
 EEPROM uint8_t  EE_Buffer_1 [1];
 EEPROM uint8_t  EE_Buf_Flag [1];
 
-
-
+uint8_t code[4];
+uint8_t code2[5];
 
 
 #define USE_HSI
@@ -114,13 +117,12 @@ EEPROM uint8_t  EE_Buf_Flag [1];
   */
 void main(void)
 { 
-uint8_t PayloadLength,
-				data_sensor,
-				*bufMessage;
+	uint8_t PayloadLength,
+			data_sensor,
+			*bufMessage;
 		
-	/* deinit I/O ports */
-	DeInitClock();
-	DeInitGPIO();
+	/* uninit I/O ports */
+	UnInitialize();
 	
 	/* Select HSI as system clock source */
 	#ifdef USE_HSI
@@ -134,29 +136,12 @@ uint8_t PayloadLength,
 		CLK_HSICmd(DISABLE);
 	#endif
 
-	// Initializes the LCD glass 
-  LCD_GLASS_Init();
+	// Initialize LCD,LED,Button
+	Initialize();
 
-	
-	/* LED button init: GPIO set in push pull */
-	GPIO_Init( LED_GPIO_PORT, LED_GPIO_PIN, GPIO_Mode_Out_PP_Low_Fast);
-	// set to 0 
-	GPIOE->ODR &= ~LED_GPIO_PIN;
-	
-	/* USER button init: GPIO set in input interrupt active mode */
-  GPIO_Init( BUTTON_GPIO_PORT, USER_GPIO_PIN, GPIO_Mode_In_FL_IT);
-	EXTI_SetPinSensitivity(EXTI_Pin_7, EXTI_Trigger_Falling);
-
-  //* Init Bar on LCD all are OFF
-  BAR0_OFF;
-  BAR1_OFF;
-  BAR2_OFF;
-  BAR3_OFF;	
-	
 	enableInterrupts();
-	
   
-  //* At power on VDD diplays 
+	//* At power on VDD diplays 
 	bufMessage = NDEFmessage;
 	
 	if (EEMenuState > STATE_TEMPMEAS) 
@@ -170,7 +155,6 @@ uint8_t PayloadLength,
 	
 	/* *************************** */
 	
-	/*GPIO_ToggleBits(LED_GPIO_PORT,GPIO_Pin_6);  /* Das Funktioniert */
 	
 	if (EEInitial == 0 )
 	{
@@ -178,98 +162,101 @@ uint8_t PayloadLength,
 			EEInitial =1;
 	}
 	
-  while (1)
-  {
+	while (1)
+	{
     		
 		switch (state_machine)
-    {
+		{
 			  
-				case STATE_VREF:
-					// measure the voltage available at the output of the M24LR04E-R
-					Vref_measure();
+			case STATE_VREF:
+				// measure the voltage available at the output of the M24LR04E-R
+				Vref_measure();
 
-					delayLFO_ms (2);
-					
-					
-        break;
+				delayLFO_ms (2);
+							
+			break;
 			
-        case STATE_CHECKNDEFMESSAGE:
-				
-				
+			case STATE_CHECKNDEFMESSAGE:
+						
 				if(User_ReadNDEFMessage (&PayloadLength) == SUCCESS)
-				
 				{
 					if(Check_Code_Length() == SUCCESS)
 					{
-						LCD_GLASS_Clear();
+						clearLCD();
+				
+						code[0]=EE_Buffer_2[0];
+						code[1]=EE_Buffer_3[0];
+						code[2]=EE_Buffer_4[0];
+						code[3]=EE_Buffer_5[0];
 						
+						// State_DisplayMessage(code,4);
+						// delayLFO_ms (2);
 						
+						// State_DisplayMessage("NEXT",4);
+						// delayLFO_ms (2);
+
 						
-						
+						// State_DisplayMessage(code2,5);
+						// delayLFO_ms (2);
+				
+				
 						if( EE_Buf_Flag[0] == 0x00 ) // geoeffnete Zustand
 						{
-							GPIO_ResetBits(LED_GPIO_PORT,GPIO_Pin_6);
+							setLED(0); // turn LED off
 							State_DisplayMessage ("OPEN", 4);
 							Copy_Units_in_other_memory(); //Zustands Transaktion von geoffnet nach geschlossen
 						}
 							
 						else if( EE_Buf_Flag[0] == 0xFF ) // geschlossene Zustand
 						{
-							GPIO_SetBits(LED_GPIO_PORT,GPIO_Pin_6);
+							setLED(1); // turn LED on
 							State_DisplayMessage ("CLOSED", 6);
 							Read_Units_from_memory();   //Zustands Transaktion von geschlossen nach geoffnet
 						}
 					}
 					else
 						{
-							LCD_GLASS_Clear();
+							clearLCD();
 							User_DisplayMessage ("ONLY 4 CHARACTERS ENTER PIN AGAIN", 30);
 							delayLFO_ms (2);
 
 						}
-				}
+				}				
+				delayLFO_ms (2);
 				
-					//else //GPIO_ToggleBits(LED_GPIO_PORT,GPIO_Pin_6);
+			break;
 				
-					delayLFO_ms (2);
-				
-        break;
-				
-				case STATE_TEMPMEAS:
+			case STATE_TEMPMEAS:
 						
-						// read the ambiant tempserature from the STTS751
-						User_GetOneTemperature (&data_sensor);
-						// display the temperature
-						User_DisplayOneTemperature (data_sensor);
+				// read the ambiant tempserature from the STTS751
+				User_GetOneTemperature (&data_sensor);
+				// display the temperature
+				User_DisplayOneTemperature (data_sensor);
 			
-						delayLFO_ms (2);
-						
-				break;
-			
+				delayLFO_ms (2);
+					
 			break;
   
-        // for safe: normaly never reaches 		
-        default:
-					LCD_GLASS_Clear();
-					LCD_GLASS_DisplayString("Error");
-					state_machine = STATE_VREF;
-        break;
-      }
+			// for safe: normaly never reaches 		
+			default:
+				clearLCD();
+				LCD_GLASS_DisplayString("Error");
+				state_machine = STATE_VREF;
+			break;
+		}
     }		
 }	
 
 
 /**
   * @brief this functions returns a temperature measurement provided by 
-	* @brief the STTS751 device.
-	* @par data_sensor : temperature measurement
+  * @brief the STTS751 device.
+  * @par data_sensor : temperature measurement
   * @retval none
-  */
-	
+  */	
 static void User_GetOneTemperature (uint8_t *data_sensor)
 {
 	uint8_t 	Pointer_temperature = 0x00;					// temperature access 
-	
 	
 	data_sensor[0] = 0x00;
 	// Config the Temperature sensor in OneShotMode 
@@ -294,8 +281,7 @@ static void User_GetOneTemperature (uint8_t *data_sensor)
   */
 static void User_DisplayOneTemperature (uint8_t data_sensor)
 {
-uint16_t 	TempChar16[6];
-//GPIO_ToggleBits(LED_GPIO_PORT,GPIO_Pin_6);  
+	uint16_t 	TempChar16[6];
 	TempChar16[5] = 'C';
 	TempChar16[4] = ' ';
 	// check if the temperature is negative
@@ -532,8 +518,9 @@ static void Read_Units_from_memory(void)
 		GPIO_HIGH(M24LR04E_I2C_SCL_GPIO_PORT,M24LR04E_I2C_SDA_PIN);	
 		//************************
 		EE_Buffer_2[0] = EE_Buffer_2[0];
-		GPIO_SetBits(LED_GPIO_PORT,GPIO_Pin_6); 
-			
+		
+		setLED(1);	// turn LED on
+		
 		//***************** 3. Byte von EEPROM Lesen ***************
 		M24LR04E_Init();
 		
@@ -544,6 +531,7 @@ static void Read_Units_from_memory(void)
 		GPIO_HIGH(M24LR04E_I2C_SCL_GPIO_PORT,M24LR04E_I2C_SCL_PIN);	
 		GPIO_HIGH(M24LR04E_I2C_SCL_GPIO_PORT,M24LR04E_I2C_SDA_PIN);	
 		//************************
+	
 		EE_Buffer_3[0] = EE_Buffer_3[0];		
 		
 		//***************** 4. Byte von EEPROM Lesen ***************
@@ -555,6 +543,7 @@ static void Read_Units_from_memory(void)
 		GPIO_HIGH(M24LR04E_I2C_SCL_GPIO_PORT,M24LR04E_I2C_SCL_PIN);	
 		GPIO_HIGH(M24LR04E_I2C_SCL_GPIO_PORT,M24LR04E_I2C_SDA_PIN);	
 		//************************
+	
 		EE_Buffer_4[0] = EE_Buffer_4[0];
 		
 		//***************** 5. Byte von EEPROM Lesen ***************
@@ -566,13 +555,13 @@ static void Read_Units_from_memory(void)
 		GPIO_HIGH(M24LR04E_I2C_SCL_GPIO_PORT,M24LR04E_I2C_SCL_PIN);	
 		GPIO_HIGH(M24LR04E_I2C_SCL_GPIO_PORT,M24LR04E_I2C_SDA_PIN);	
 		//************************
+
 		EE_Buffer_5[0] = EE_Buffer_5[0];
 	
 		//***************** Lesen Status Byte ***************
 		
 		if ( Check_PID_Buffer_Equal() == SUCCESS ) 
 			{
-				//GPIO_ResetBits(LED_GPIO_PORT,GPIO_Pin_6);
 				EE_Buf_Flag[0] = 0x00;
 				OverwriteAll_CODE_EEPROM();
 			}
@@ -685,11 +674,9 @@ if ( EE_Buffer_1[0] == '$')
 		EE_Buffer_8[0] = EE_Buffer_3[0];
 		EE_Buffer_7[0] = EE_Buffer_2[0];
 		
-	
 		
+			
 		
-		//GPIO_SetBits(LED_GPIO_PORT,GPIO_Pin_6);
-
 		//*** Status Flag in EEPROM Speicher auf Geschlossen Setzen *****
 		EE_Buf_Flag[0] = 0xFF;
 
@@ -702,6 +689,28 @@ if ( EE_Buffer_1[0] == '$')
 
 static uint8_t Check_PID_Buffer_Equal(void)
 {
+		code2[0] = EE_Buffer_2[0];
+		code2[1] = EE_Buffer_3[0];
+		code2[2] = EE_Buffer_4[0];
+		code2[3] = EE_Buffer_5[0];
+		
+		State_DisplayMessage("BUFF1",5);
+		delayLFO_ms (1);
+		
+		State_DisplayMessage(code2,4);
+		delayLFO_ms (1);
+		
+		code2[0] = EE_Buffer_7[0];
+		code2[1] = EE_Buffer_8[0];
+		code2[2] = EE_Buffer_9[0];
+		code2[3] = EE_Buffer_10[0];
+		
+		State_DisplayMessage("BUFF2",5);
+		delayLFO_ms (1);
+		
+		State_DisplayMessage(code2,4);
+		delayLFO_ms (1);
+
 
 	if((EE_Buffer_10[0] == EE_Buffer_5[0]) &&
 			(EE_Buffer_9[0] == EE_Buffer_4[0]) &&
@@ -709,9 +718,15 @@ static uint8_t Check_PID_Buffer_Equal(void)
 					(EE_Buffer_7[0] == EE_Buffer_2[0])
 			 )
 		{ 
+			State_DisplayMessage("SUCCES",6);
 			return SUCCESS;
 		}
-	else return ERROR;
+
+	else 
+	{
+		State_DisplayMessage("ERROR",5);
+		return ERROR;
+	}
 }
 
 
@@ -770,9 +785,9 @@ static void State_DisplayMessage (uint8_t message[],uint8_t PayloadLength )
   */
 void LCD_GLASS_DisplayString_1(uint8_t* ptr)
 {
-  uint8_t i = 0x01;
+	uint8_t i = 0x01;
 
-	LCD_GLASS_Clear();
+	clearLCD();
   /* Send the string character by character on lCD */
   while ((*ptr != 0) & (i < 8))
   {
@@ -1045,61 +1060,7 @@ uint8_t Buffer[0xFF],
 
 }
 
-/**
-  * @brief this functions deinitializes all the clocks
-	* @par Parameters None
-  * @retval none
-  */
-static void DeInitClock ( void )
-{
-	CLK_PeripheralClockConfig(CLK_Peripheral_TIM2, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_TIM3, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_TIM4, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_I2C1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_SPI1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_USART1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_BEEP, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_DAC, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_ADC1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_TIM1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_RTC, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_LCD, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_ADC1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_DMA1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_ADC1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_BOOTROM, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_AES, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_ADC1, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_TIM5, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_SPI2, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_USART2, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_USART3, DISABLE);
-	CLK_PeripheralClockConfig(CLK_Peripheral_CSSLSE, DISABLE);
-	
-}
-/**
-  * @brief this functions configures all the GPIO as 
-	* @par Parameters None
-  * @retval none
-  */
-static void DeInitGPIO ( void )
-{
-		//GPIO_Mode_In_PU_No_IT
-	GPIO_Init( GPIOA, GPIO_Pin_All, GPIO_Mode_Out_OD_Low_Fast);
-	GPIO_Init( GPIOB, GPIO_Pin_All, GPIO_Mode_Out_OD_Low_Fast);
-//SSe	GPIO_Init( GPIOC, GPIO_Pin_All, GPIO_Mode_Out_OD_Low_Fast);
-  GPIO_Init( GPIOC, GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 |\
-	           GPIO_Pin_5 | GPIO_Pin_6 |GPIO_Pin_7, GPIO_Mode_Out_OD_Low_Fast);
-	GPIO_Init( GPIOD, GPIO_Pin_All, GPIO_Mode_Out_OD_Low_Fast);
-	GPIO_Init( GPIOE, GPIO_Pin_All, GPIO_Mode_Out_OD_Low_Fast);
-	// Set all the GPIO state to 1
-	GPIOA->ODR = 0xFF;
-	GPIOB->ODR = 0xFF;
-	GPIOC->ODR = 0xFF;
-	GPIOD->ODR = 0xFF;
-	GPIOE->ODR = 0xFF;
 
-}
 
 /**
   * @brief this functions initilizes a buffer

@@ -61,6 +61,11 @@ Debug\stm8l15x_gpio.o
 Debug\stm8l15x_i2c.o
 Debug\stm8l15x_lcd.o
 Debug\stm8l15x_pwr.o
+Debug\button.o
+Debug\init.o
+Debug\lcd.o
+Debug\led.o
+Debug\uninit.o
 Debug\vcc_measure.o
 Debug\delay.o
 Debug\discover_functions.o

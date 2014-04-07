@@ -58,6 +58,11 @@ Release\stm8l15x_gpio.o
 Release\stm8l15x_i2c.o
 Release\stm8l15x_lcd.o
 Release\stm8l15x_pwr.o
+Release\button.o
+Release\init.o
+Release\lcd.o
+Release\led.o
+Release\uninit.o
 Release\vcc_measure.o
 Release\delay.o
 Release\discover_functions.o
