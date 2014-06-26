@@ -9,8 +9,44 @@
     tools:context="com.example.projectwork.MainActivity$PlaceholderFragment" >
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scrollbarStyle="insideInset"
+        android:scrollbars="vertical" />
+    
+    <!-- Button CONNECT -->
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="14dp"
+        android:onClick="connectButton"
+        android:text="@string/button_connect"
+        android:width="45dp" />
+
+    <!-- Button TX -->
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/button1"
+        android:layout_marginBottom="14dp"
+        android:onClick="txButton"
+        android:text="@string/button_tx" />
+    
+        <!-- Button RX -->
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/button1"
+        android:layout_marginBottom="14dp"
+        android:onClick="rxButton"
+        android:text="@string/button_rx" />
 
 </RelativeLayout>
