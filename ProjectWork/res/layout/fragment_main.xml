@@ -9,18 +9,8 @@
     tools:context="com.example.projectwork.MainActivity$PlaceholderFragment" >
 
     <TextView
-        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="17dp" 
-        android:text="@string/button_connect" 
-        android:onClick="connectButton" />
 
 </RelativeLayout>
