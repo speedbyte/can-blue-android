@@ -11,8 +11,10 @@ Unlock protection before a programming cycle=0
 Count=0
 ProgramEvenIfBlank=0
 [PROGRAM MEMORY]
-Count=1
+Count=3
 File0=C:\DropBox\Automotive Systems 2 (Software Based)\ProjectWork\NFC\nfc\Project\STVD\Cosmic\Debug\discover.s19
+File1=D:\ProjectWork\nfc\Project\STVD\Cosmic\Debug\discover.s19
+File2=D:\Temp\nfc\Project\STVD\Cosmic\Debug\discover.s19
 ProgramEvenIfBlank=0
 [OPTION BYTE]
 Count=1

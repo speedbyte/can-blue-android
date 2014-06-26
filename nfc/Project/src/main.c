@@ -676,11 +676,35 @@ if ( EE_Buffer_1[0] == '$')
 		
 		
 			
-		
-		//*** Status Flag in EEPROM Speicher auf Geschlossen Setzen *****
-		EE_Buf_Flag[0] = 0xFF;
+		/* Check if the numbers are successfully transmitted, otherwise stay in state OPEN */
+		/* This makes sure that the transmission of the NDEF Message was working correctly */
+		if(EE_Buffer_2[0] < 0x30 || EE_Buffer_2[0] > 0x39)
+		{
+			State_DisplayMessage("EIT",3);	/* EIT = ERROR IN TRANSMISSION */
+			delayLFO_ms (2);
+		}
+		else if(EE_Buffer_3[0] < 0x30 || EE_Buffer_3[0] > 0x39)
+		{
+			State_DisplayMessage("EIT",3);  /* EIT = ERROR IN TRANSMISSION */
+			delayLFO_ms (2);
+		}
+		else if(EE_Buffer_4[0] < 0x30 || EE_Buffer_4[0] > 0x39)
+		{
+			State_DisplayMessage("EIT",3);  /* EIT = ERROR IN TRANSMISSION */
+			delayLFO_ms (2);
+		}
+		else if(EE_Buffer_5[0] < 0x30 || EE_Buffer_5[0] > 0x39)
+		{
+			State_DisplayMessage("EIT",3);  /* EIT = ERROR IN TRANSMISSION */
+			delayLFO_ms (2);
+		}
+		else
+		{
+			//*** Status Flag in EEPROM Speicher auf Geschlossen Setzen *****
+			EE_Buf_Flag[0] = 0xFF;
 
-		OverwriteAll_CODE_EEPROM();
+			OverwriteAll_CODE_EEPROM();
+		}		
 	}	
 }
 
@@ -689,6 +713,7 @@ if ( EE_Buffer_1[0] == '$')
 
 static uint8_t Check_PID_Buffer_Equal(void)
 {
+		/*
 		code2[0] = EE_Buffer_2[0];
 		code2[1] = EE_Buffer_3[0];
 		code2[2] = EE_Buffer_4[0];
@@ -710,7 +735,33 @@ static uint8_t Check_PID_Buffer_Equal(void)
 		
 		State_DisplayMessage(code2,4);
 		delayLFO_ms (1);
-
+		*/
+		
+	/* check if the numbers are successfully transmitted, otherwise return ERROR for retry */
+	if(EE_Buffer_2[0] < 0x30 || EE_Buffer_2[0] > 0x39)
+	{
+		State_DisplayMessage("EIT",3);	/* EIT = ERROR IN TRANSMISSION */
+		delayLFO_ms (2);
+		return ERROR;
+	}
+	else if(EE_Buffer_3[0] < 0x30 || EE_Buffer_3[0] > 0x39)
+	{
+		State_DisplayMessage("EIT",3);	/* EIT = ERROR IN TRANSMISSION */
+		delayLFO_ms (2);
+		return ERROR;	
+	}
+	else if(EE_Buffer_4[0] < 0x30 || EE_Buffer_4[0] > 0x39)
+	{
+		State_DisplayMessage("EIT",3);	/* EIT = ERROR IN TRANSMISSION */
+		delayLFO_ms (2);
+		return ERROR;	
+	}
+	else if(EE_Buffer_5[0] < 0x30 || EE_Buffer_5[0] > 0x39)
+	{
+		State_DisplayMessage("EIT",3);	/* EIT = ERROR IN TRANSMISSION */
+		delayLFO_ms (2);
+		return ERROR;	
+	}
 
 	if((EE_Buffer_10[0] == EE_Buffer_5[0]) &&
 			(EE_Buffer_9[0] == EE_Buffer_4[0]) &&

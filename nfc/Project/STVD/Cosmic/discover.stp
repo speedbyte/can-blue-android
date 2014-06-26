@@ -61,7 +61,7 @@ String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=STM8 Cosmic
-String.102.0=
+String.102.0=C:\Program Files (x86)\COSMIC\CXSTM8_32K
 String.103.0=
 String.104.0=Hstm8
 String.105.0=Lib
@@ -463,8 +463,33 @@ String.6.0=2010,9,16,17,51,46
 [Root.User.User\inc]
 ElemType=Folder
 PathName=User\inc
-Child=Root.User.User\inc...\..\inc\vcc_measure.h
+Child=Root.User.User\inc...\..\inc\button.h
 Next=Root.User.User\src
+
+[Root.User.User\inc...\..\inc\button.h]
+ElemType=File
+PathName=..\..\inc\button.h
+Next=Root.User.User\inc...\..\inc\init.h
+
+[Root.User.User\inc...\..\inc\init.h]
+ElemType=File
+PathName=..\..\inc\init.h
+Next=Root.User.User\inc...\..\inc\lcd.h
+
+[Root.User.User\inc...\..\inc\lcd.h]
+ElemType=File
+PathName=..\..\inc\lcd.h
+Next=Root.User.User\inc...\..\inc\led.h
+
+[Root.User.User\inc...\..\inc\led.h]
+ElemType=File
+PathName=..\..\inc\led.h
+Next=Root.User.User\inc...\..\inc\uninit.h
+
+[Root.User.User\inc...\..\inc\uninit.h]
+ElemType=File
+PathName=..\..\inc\uninit.h
+Next=Root.User.User\inc...\..\inc\vcc_measure.h
 
 [Root.User.User\inc...\..\inc\vcc_measure.h]
 ElemType=File
@@ -518,7 +543,32 @@ PathName=..\..\inc\stm8l_discovery_lcd.h
 [Root.User.User\src]
 ElemType=Folder
 PathName=User\src
-Child=Root.User.User\src...\..\src\vcc_measure.c
+Child=Root.User.User\src...\..\src\button.c
+
+[Root.User.User\src...\..\src\button.c]
+ElemType=File
+PathName=..\..\src\button.c
+Next=Root.User.User\src...\..\src\init.c
+
+[Root.User.User\src...\..\src\init.c]
+ElemType=File
+PathName=..\..\src\init.c
+Next=Root.User.User\src...\..\src\lcd.c
+
+[Root.User.User\src...\..\src\lcd.c]
+ElemType=File
+PathName=..\..\src\lcd.c
+Next=Root.User.User\src...\..\src\led.c
+
+[Root.User.User\src...\..\src\led.c]
+ElemType=File
+PathName=..\..\src\led.c
+Next=Root.User.User\src...\..\src\uninit.c
+
+[Root.User.User\src...\..\src\uninit.c]
+ElemType=File
+PathName=..\..\src\uninit.c
+Next=Root.User.User\src...\..\src\vcc_measure.c
 
 [Root.User.User\src...\..\src\vcc_measure.c]
 ElemType=File
