@@ -6,6 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/blueback"
     tools:context="com.example.projectwork.MainActivity$PlaceholderFragment" >
 
     <TextView
@@ -14,9 +15,6 @@
         android:layout_height="250dp"
         android:scrollbarStyle="insideInset"
         android:scrollbars="vertical" />
-
-
-    
 
     
     <!-- Button CONNECT -->
@@ -27,10 +25,11 @@
         android:layout_above="@+id/button2"
         android:layout_alignLeft="@+id/textView1"
         android:layout_alignRight="@+id/button3"
+        android:layout_marginBottom="10dp"
         android:onClick="connectButton"
         android:text="@string/button_connect"
         android:width="45dp"
-        android:background="@drawable/custom_button_green" />
+        android:background="@drawable/custom_button_grey" />
 
     <TextView
         android:id="@+id/textView2"
@@ -43,18 +42,7 @@
         android:text="@string/text_ok"
         android:background="@color/red" />
 
-    <!-- Button DISCONNECT -->
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button3"
-        android:layout_alignLeft="@+id/button2"
-        android:layout_alignParentRight="true"
-        android:onClick="disconnectButton"
-        android:text="@string/button_disconnect"
-        android:width="45dp"
-        android:background="@drawable/custom_button_green" />
+   
 
     <!-- Button RX -->
     <Button
@@ -65,7 +53,8 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="29dp"
         android:onClick="rxButton"
-        android:text="@string/button_rx" />
+        android:text="@string/button_rx"        
+        android:background="@drawable/custom_button_grey" />
     
     <!-- Button TX -->
     <Button
@@ -76,6 +65,19 @@
         android:layout_alignBottom="@+id/button3"
         android:layout_alignRight="@+id/textView1"
         android:onClick="txButton"
-        android:text="@string/button_tx" />
+        android:text="@string/button_tx"
+        android:background="@drawable/custom_button_grey" />
+
+    <!-- Button DISCONNECT -->
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button2"
+        android:layout_below="@+id/textView2"
+        android:background="@drawable/custom_button_grey"
+        android:onClick="disconnectButton"
+        android:text="@string/button_disconnect"
+        android:width="45dp" />
 
 </RelativeLayout>

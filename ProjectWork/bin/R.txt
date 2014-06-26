@@ -120,7 +120,7 @@ int bool abc_config_actionMenuItemAllCaps 0x7f060005
 int bool abc_config_allowActionMenuItemTextWithIcon 0x7f060004
 int bool abc_config_showMenuShortcutsWhenKeyboardPresent 0x7f060003
 int bool abc_split_action_bar_is_narrow 0x7f060002
-int color abc_search_url_text_holo 0x7f07000a
+int color abc_search_url_text_holo 0x7f07000b
 int color abc_search_url_text_normal 0x7f070000
 int color abc_search_url_text_pressed 0x7f070002
 int color abc_search_url_text_selected 0x7f070001
@@ -129,6 +129,7 @@ int color green 0x7f070005
 int color green02 0x7f070006
 int color grey 0x7f070008
 int color grey01 0x7f070009
+int color grey02 0x7f07000a
 int color red 0x7f070003
 int color red02 0x7f070004
 int dimen abc_action_bar_default_height 0x7f080002
@@ -241,10 +242,12 @@ int drawable abc_textfield_searchview_holo_dark 0x7f020053
 int drawable abc_textfield_searchview_holo_light 0x7f020054
 int drawable abc_textfield_searchview_right_holo_dark 0x7f020055
 int drawable abc_textfield_searchview_right_holo_light 0x7f020056
-int drawable custom_button_green 0x7f020057
-int drawable custom_button_grey 0x7f020058
-int drawable custom_button_red 0x7f020059
-int drawable ic_launcher 0x7f02005a
+int drawable blueback 0x7f020057
+int drawable custom_button_green 0x7f020058
+int drawable custom_button_grey 0x7f020059
+int drawable custom_button_red 0x7f02005a
+int drawable ic_launcher 0x7f02005b
+int drawable launcher_blue 0x7f02005c
 int id Button1 0x7f050044
 int id Button2 0x7f050045
 int id action_bar 0x7f05001c

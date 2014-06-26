@@ -858,7 +858,7 @@ containing a value of this type.
         public static final int abc_split_action_bar_is_narrow=0x7f060002;
     }
     public static final class color {
-        public static final int abc_search_url_text_holo=0x7f07000a;
+        public static final int abc_search_url_text_holo=0x7f07000b;
         public static final int abc_search_url_text_normal=0x7f070000;
         public static final int abc_search_url_text_pressed=0x7f070002;
         public static final int abc_search_url_text_selected=0x7f070001;
@@ -877,6 +877,9 @@ containing a value of this type.
         /**  Color LightGrey #RRGGBB 
          */
         public static final int grey01=0x7f070009;
+        /**  Color DarkGrey #RRGGBB 
+         */
+        public static final int grey02=0x7f07000a;
         /**  Color Red #RRGGBB 
          */
         public static final int red=0x7f070003;
@@ -1098,10 +1101,12 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int custom_button_green=0x7f020057;
-        public static final int custom_button_grey=0x7f020058;
-        public static final int custom_button_red=0x7f020059;
-        public static final int ic_launcher=0x7f02005a;
+        public static final int blueback=0x7f020057;
+        public static final int custom_button_green=0x7f020058;
+        public static final int custom_button_grey=0x7f020059;
+        public static final int custom_button_red=0x7f02005a;
+        public static final int ic_launcher=0x7f02005b;
+        public static final int launcher_blue=0x7f02005c;
     }
     public static final class id {
         public static final int Button1=0x7f050044;
