@@ -14,7 +14,7 @@
     <string name="button_connect">Connect</string>
 
     <!--  -->
-    <string name="button_reconnect">Reconnect</string>
+    <string name="button_disconnect">Disconnect</string>
 
     <!--  -->
     <string name="title_activity_start_stop">StartStopActivity</string>
@@ -43,4 +43,7 @@
     <!--  -->
     <string name="title_activity_rx">RxActivity</string>
 
+    <!--  -->
+    <string name="text_ok">OK</string>
+    
 </resources>

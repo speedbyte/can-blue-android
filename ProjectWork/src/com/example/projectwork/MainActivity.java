@@ -2,6 +2,10 @@ package com.example.projectwork;
 
 import java.util.ArrayList;
 
+import API.ADK.API_ADK;
+import API.ADK.ConstantList;
+import API.ADK.DeviceInformation;
+import API.ADK.ReturnCode;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,14 +15,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
-import API.ADK.*;
 
 public class MainActivity extends ActionBarActivity {
 
+	public static API_ADK.Device.Controller demoController = null;
+	
+	final private int bdRate = 500;
+	
 	private TextView textview = null;
 	private API_ADK.Device demoDevice = null;
-	public static API_ADK.Device.Controller demoController = null;
+	private API_ADK ADK = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +36,17 @@ public class MainActivity extends ActionBarActivity {
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
-		}
+		}		
 	}
 
+//	@Override
+//	protected void onStop() {
+//		
+//		textview = (TextView) findViewById(R.id.textView1);
+//		textview.setText("ONSTOPMETHOD");
+//		super.onStop(); 
+//	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -72,17 +88,15 @@ public class MainActivity extends ActionBarActivity {
 	 * Called when the user clicks the Connect button
 	 */
 	public void connectButton(View view) {
-		
 
-		textview = null;
+
 		demoDevice = null;
 		demoController = null;
 
 		textview = (TextView) findViewById(R.id.textView1);
 		textview.setText("Create ADK object...");
-		
-		
-		API_ADK ADK = API_ADK.createAPI_ADKObject();
+				
+		ADK = API_ADK.createAPI_ADKObject();
 		if (ADK != null) {
 			textview.append("OK (V" + ADK.getADKVersion() + ")\n");
 		} else {
@@ -209,12 +223,16 @@ public class MainActivity extends ActionBarActivity {
         }
         
         textview.append("Initialize CAN controller...");
-        returnCode = demoController.initializeController(1000, ConstantList.SOFTWARE_FILTER);
+        returnCode = demoController.initializeController(bdRate, ConstantList.SOFTWARE_FILTER);
         if (returnCode == ReturnCode.SUCCESS){
-        	textview.append("OK (1000 KBit/s)\n");
+        	textview.append("OK (" + bdRate + " KBit/s)\n");
         }
         else {
         	textview.append("Failed\n");
+        	if(demoController.deinitializeController() == ReturnCode.SUCCESS)
+        	{
+        		textview.append("DeInitialze of Controller successful\n");
+        	}
         	if(ADK.deinitializeADK() == ReturnCode.SUCCESS)
 			{
 				textview.append("Deinitialize Successful\n");
@@ -230,9 +248,21 @@ public class MainActivity extends ActionBarActivity {
         returnCode = demoController.startController();
         if (returnCode == ReturnCode.SUCCESS){
         	textview.append("OK\n");
+        	TextView textview2 = (TextView) findViewById(R.id.textView2);
+        	textview2.setBackgroundColor(getResources().getColor(R.color.green));
+        	
+        	Button btn=(Button)findViewById(R.id.button1);
+        	btn.setEnabled(false);
+        	
+        	btn = (Button) findViewById(R.id.button4);
+        	btn.setEnabled(true);
         }
         else {
         	textview.append("Failed\n");
+        	if(demoController.stopController() == ReturnCode.SUCCESS)
+        	{
+        		textview.append("StopController successful\n");
+        	}
         	if(ADK.deinitializeADK() == ReturnCode.SUCCESS)
 			{
 				textview.append("Deinitialize Successful\n");
@@ -243,7 +273,38 @@ public class MainActivity extends ActionBarActivity {
 			}
         	return;
         }
-
+	}
+	
+	public void disconnectButton(View view)
+	{				
+		if(demoController != null && ADK != null)
+		{
+			if(demoController.stopController() == ReturnCode.SUCCESS)
+			{
+	        	textview.setText("StopController successful\n");
+				if(demoController.deinitializeController() == ReturnCode.SUCCESS)
+				{
+		        	textview.append("Deinitialize Controller successful\n");
+		        	if(demoDevice.disconnectDevice() == ReturnCode.SUCCESS)
+		        	{
+			        	textview.append("Deinitialize device successful\n");
+						if(ADK.deinitializeADK() == ReturnCode.SUCCESS)
+						{
+				        	TextView textview2 = (TextView) findViewById(R.id.textView2);
+				        	textview2.setBackgroundColor(getResources().getColor(R.color.red));
+				        	
+				        	Button btn=(Button)findViewById(R.id.button1);
+				        	btn.setEnabled(true);
+				        	
+				        	btn = (Button) findViewById(R.id.button4);
+				        	btn.setEnabled(false);
+		
+				        	textview.append("Deinitialize ADK successful\n");
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	public void txButton(View view)
@@ -257,9 +318,4 @@ public class MainActivity extends ActionBarActivity {
 		Intent intent = new Intent(this, RxActivity.class);
 		startActivity(intent);
 	}	
-	
-
-	
-	
-
 }
