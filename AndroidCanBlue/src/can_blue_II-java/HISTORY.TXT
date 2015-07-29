@@ -1,0 +1,22 @@
+                  History-File zum CANblue ADK
+                  ============================
+
++============================================================================+
+| File               | Version | Datum    | Autor        | Status            |
++----------------------------------------------------------------------------+
+
++============================================================================+
+| CANblue_ADK_V0.0.3 | V0.0.3  | 23.10.12 | H.Schugowitz | 1. Version (Beta) |
++----------------------------------------------------------------------------+
+- The CANblue ADK V0.0.3 is developed and tested on an Acer ICONIA A500 Tablet
+  with Bluetooth V2.1 and Android V3.2.
+- As remote device the CANblue V2.00.08 was used.
+- As development environment the Eclipse SDK V3.7.1 (Indigo) was used:
+  * Java Development Kit V7.0
+  * Android SDK Tools V17 (part of Android SDK)
+  * Android SDK Platform-tools V11 (part of Android SDK)
+  * Android SDK Platform V13 (part of Android SDK)
+  * Android Development Tools V17
+
+
+
