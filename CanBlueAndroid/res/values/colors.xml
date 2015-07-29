@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- Color Red #RRGGBB -->
+    <color name="red">#ff0000</color>
+    
+    <!-- Color Red/Grey #RRGGBB -->
+    <color name="red02">#600000</color>
+    
+    <!-- Color Green #RRGGBB -->
+    <color name="green">#00ff00</color>
+    
+    <!-- Color Green/Grey #RRGGBB -->
+    <color name="green02">#006000</color>
+    
+    <!-- Color Black #RRGGBB -->
+    <color name="black">#000000</color>
+    
+    <!-- Color Grey #RRGGBB -->
+    <color name="grey">#AFAFAF</color>
+           
+    <!-- Color LightGrey #RRGGBB -->
+    <color name="grey01">#DFDFDF</color>
+    
+    <!-- Color DarkGrey #RRGGBB -->
+    <color name="grey02">#6F6F6F</color>
+    
+</resources>
